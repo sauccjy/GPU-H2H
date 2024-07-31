@@ -35,3 +35,32 @@ v 2 4.0 10.2            //vertex 2 and it's (Longitude, Latitude) = (4.0, 10.2)
 ......
 ```
 
+We also use partitioning to generate orders. Directory ./Partition/13 covers two partition result. 
+We store there partition result as an Array. ''xxxID.txt'' records such array, and ''xxxCut.txt'' records the partition tree.
+
+The format of ''xxxID.txt' is:
+```
+13                  //Node Number;
+0 1.0 6.0 2         //index in array, Longitude, Latitude, vertex ID - 1;
+1 6.0 1.1 6
+......
+```
+
+The format of ''xxxCut.txt'' is:
+```
+4                       //Partition Tree height
+1 0 13                  //Sub graph at top-1 layer, [start index, end index) = [0, 13)
+2 0 6                   //Sub graph at top-2 layer, [start index, end index) = [0, 6)
+2 6 13
+3 0 3
+......
+```
+
+##Run
+After compiling, we run
+```
+./G2H 
+```
+
+
+After the end of construct or query, datas will be recorded at ./ConstructInfo/13/ and 
