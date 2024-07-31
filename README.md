@@ -60,11 +60,11 @@ The format of ''xxxCut.txt'' is:
 ```
 
 ## Run
-After compiling, we run
+After compiling, we run next code to construct Label.
 ```
 ./G2H PartitionHeight ChangeToGlobalHeight useGPUContract useGPUConstruct isQuery
 ```
-to construct Label.
+
 
 'Partition Height' represents total partition Tree Height you used;
 
