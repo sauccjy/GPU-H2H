@@ -80,7 +80,7 @@ After the end of construct, construct information will be recorded at './Constru
 If answered query, query time will be recorded at './QueryResult/13/xxx.csv'.
 
 
-## Difference between L3 and L4
+## Difference between L3-Label and L4-Label
 
 We did not comment out the L4 code.
 
