@@ -6,7 +6,7 @@ The code for H2H GPU-version.
 We run experiments on a server with i5-13600k 20 threads CPU, a NVIDIA RTX 4090 24GB GPU, 32GB memory, and running Ubuntu 22.04-LTS system. 
 We use the nvcc compiler to compile our code. Our g++ version is 11.2, nvcc version is 12.0, and GPU driver version is 12.0.525. GPU compute capacity is 6.0.
 
-Although the Thrust library only requires a compute capacity of 2.0 or above, in order to exploit the GPU performance, please use a compute capacity of at least 5.0 or above.
+Although the Thrust library only requires a compute capacity of 2.0 or above, in order to exploit the GPU performance, please use a NVIDIA GPU with at least 5.0 or above compute capacity.
 
 
 ## Compile
