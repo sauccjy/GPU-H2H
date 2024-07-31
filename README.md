@@ -74,7 +74,7 @@ After compiling, we run next code to construct Label.
 
 'isQuery' == 0 means not query, and == 1 will run queries from 10K to 1.5M with step = 1K;
 
-After the end of construct, construct information will be recorded at './ConstructInfo/13/CPU-GPU.csv' for useGPUContract == 0 and useGPUConstruct == 1 state.
+After the end of construction, construct information will be recorded at './ConstructInfo/13/CPU-GPU.csv' for useGPUContract == 0 and useGPUConstruct == 1 state.
 If answered query, query time will be recorded at './QueryResult/13/xxx.csv'.
 
 
