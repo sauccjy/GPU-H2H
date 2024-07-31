@@ -81,16 +81,19 @@ If answered query, query time will be recorded at './QueryResult/13/xxx.csv'.
 
 
 ## Difference between L3 and L4
+
 We did not comment out the L4 code.
 
 If readers need to run L3 label, please comment out L4 code in next functions:
 
 Kernel_functions.cu: 
+
 (line 738-742) makeH2HLabel_noCommunication_D_noHub_3();
 
 (line 828-837) makeH2HLabel_noCommunication_D_noHub();
                      
 H2HConstruction.cu: 
+
 (line 723-729) makeH2HLabel_noHub_serial();
 
 (line 791-797) makeH2HLabel_noHub_multiThred();
