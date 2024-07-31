@@ -59,8 +59,24 @@ The format of ''xxxCut.txt'' is:
 ##Run
 After compiling, we run
 ```
-./G2H 
+./G2H PartitionHeight ChangeToGlobalHeight useGPUContract useGPUConstruct isQuery
 ```
+to construct Label.
+
+'Partition Height' represents total partition Tree Height you used;
+'ChangeToGlobalHeight' represents the layer switch to CPU-Global Contraction;
+'useGPUContract' is a bool type, if useGPUContract == 0, then contract on CPU, and ==1 on GPU;
+'useGPUConstruct' is a bool type too, if useGPUConstruct == 0, then construct on CPU, and == 1 on GPU;
+'isQuery' == 0 means not query, and == 1 will run queries from 10K to 1.5M with step = 1K;
+
+After the end of construct, construct information will be recorded at './ConstructInfo/13/CPU-GPU.csv' for useGPUContract == 0 and useGPUConstruct == 1 state.
+If answered query, query time will be recorded at './QueryResult/13/xxx.csv'.
 
 
-After the end of construct or query, datas will be recorded at ./ConstructInfo/13/ and 
+##difference between L3 and L4
+We did not comment out the L4 code.
+If readers need to run L3 label, please comment out L4 code in next functions:
+Kernel_functions.cu: (line 738-742) makeH2HLabel_noCommunication_D_noHub_3();
+                     (line 828-837) makeH2HLabel_noCommunication_D_noHub();
+H2HConstruction.cu:  (line 723-729) makeH2HLabel_noHub_serial();
+                     (line 791-797) makeH2HLabel_noHub_multiThred();
