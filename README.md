@@ -13,8 +13,6 @@ Although the Thrust library only requires a compute capacity of 2.0 or above, in
 
 Please run 
 ```./Zcompile.sh```
-or
-```nvcc -O3 -arch=sm_60 -o G2H ./*.cu```
 to compile our code.
 
 
