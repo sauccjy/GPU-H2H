@@ -1,14 +1,16 @@
 # GPU-H2H
 The code for H2H GPU-version.
 
-##Environment
+## Environment
+
 We run experiments on a server with i5-13600k 20 threads CPU, a NVIDIA RTX 4090 24GB GPU, 32GB memory, and running Ubuntu 22.04-LTS system. 
 We use the nvcc compiler to compile our code. Our g++ version is 11.2, nvcc version is 12.0, and GPU driver version is 12.0.525. GPU compute capacity is 6.0.
 
 Although the Thrust library only requires a compute capacity of 2.0 or above, in order to exploit the GPU performance, please use a compute capacity of at least 5.0 or above.
 
 
-##Compile
+## Compile
+
 Please run 
 ```./Zcompile.sh```
 or
@@ -16,7 +18,7 @@ or
 to compile our code.
 
 
-##Data preparation
+## Data preparation
 
 Graph files for testing like NY, FLA, E can be found at http://www.diag.uniroma1.it/~challenge9/download.shtml.
 Directory ./Graph/USA covers a test network 13. 
@@ -56,7 +58,7 @@ The format of ''xxxCut.txt'' is:
 ......
 ```
 
-##Run
+## Run
 After compiling, we run
 ```
 ./G2H PartitionHeight ChangeToGlobalHeight useGPUContract useGPUConstruct isQuery
@@ -73,7 +75,7 @@ After the end of construct, construct information will be recorded at './Constru
 If answered query, query time will be recorded at './QueryResult/13/xxx.csv'.
 
 
-##difference between L3 and L4
+## Difference between L3 and L4
 We did not comment out the L4 code.
 If readers need to run L3 label, please comment out L4 code in next functions:
 Kernel_functions.cu: (line 738-742) makeH2HLabel_noCommunication_D_noHub_3();
