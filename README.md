@@ -77,9 +77,9 @@ After compiling, we run next code to construct Label.
 
 For example, 
 ```
-./G2H 13 4 2 1 1 0
+./G2H 13 4 1 1 1 0
 ```
-will contract on CPU-GPU hybrid and construct labels on GPU, but not query. 
+will contract 4 - 1 layers on GPU but rest on CPU,  and construct labels on GPU, and not query. 
 
 After the end of construction, construct information will be recorded at './ConstructInfo/13/GPU-GPU.csv'.
 If answered query, query time will be recorded at './QueryResult/13/xxx.csv'.
