@@ -60,9 +60,10 @@ The format of ''xxxCut.txt'' is:
 ## Run
 After compiling, we run next code to construct Label.
 ```
-./G2H PartitionHeight ChangeToGlobalHeight useGPUContract useGPUConstruct isQuery
+./G2H GraphName PartitionHeight ChangeToGlobalHeight useGPUContract useGPUConstruct isQuery
 ```
 
+'GraphName' represents the graph;
 
 'Partition Height' represents total partition Tree Height you used;
 
@@ -74,7 +75,13 @@ After compiling, we run next code to construct Label.
 
 'isQuery' == 0 means not query, and == 1 will run queries from 10K to 1.5M with step = 1K;
 
-After the end of construction, construct information will be recorded at './ConstructInfo/13/CPU-GPU.csv' for useGPUContract == 0 and useGPUConstruct == 1 state.
+For example, 
+```
+./G2H 13 4 2 1 1 0
+```
+will contract on CPU-GPU hybrid and construct labels on GPU, but not query. 
+
+After the end of construction, construct information will be recorded at './ConstructInfo/13/GPU-GPU.csv'.
 If answered query, query time will be recorded at './QueryResult/13/xxx.csv'.
 
 
