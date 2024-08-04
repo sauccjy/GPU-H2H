@@ -107,4 +107,9 @@ H2HConstruction.cu:
 (line 723-729) makeH2HLabel_noHub_serial();
 
 (line 791-797) makeH2HLabel_noHub_multiThred();
-                     
+
+The query functions for answering L3 and L4 are defined in
+```
+Query.cu::H2HDistancQuery_UsingLCA_noHub()  //L4
+Query.cu::H2HDistancQuery_noLCA_noHub()     //L3
+```
