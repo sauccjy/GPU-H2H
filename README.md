@@ -70,11 +70,11 @@ After compiling, we run next code to construct Label.
 
 'GraphName' represents the graph;
 
-'Partition Height' represents total partition Tree Height you used;
+'Partition Height' represents the partition Tree Height you used;
 
 'ChangeToGlobalHeight' represents the layer switch to CPU-Global Contraction;
 
-'useGPUContract' is a bool type, if useGPUContract == 0, then contract on CPU, and ==1 on GPU;
+'useGPUContract' is a bool type, if useGPUContract == 0, then contract on CPU, and == 1 on GPU;
 
 'useGPUConstruct' is a bool type too, if useGPUConstruct == 0, then construct on CPU, and == 1 on GPU;
 
