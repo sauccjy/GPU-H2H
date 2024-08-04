@@ -37,9 +37,9 @@ v 2 4.0 10.2            //vertex 2 and it's (Longitude, Latitude) = (4.0, 10.2)
 ```
 
 We also use partitioning to generate orders. Directory ./Partition/13 covers two partition result. 
-Such partition are the results of https://github.com/sauccjy/PartitionForGPUH2H.git. 
+Such partitions are the results of https://github.com/sauccjy/PartitionForGPUH2H.git. 
 
-The partition result can be arbitrary as long as it meets the following format requirements.
+The partition results can be arbitrary as long as it meets the following format requirements.
 
 We store there partition result as an Array. ''xxxID.txt'' records such array, and ''xxxCut.txt'' records the partition tree.
 
