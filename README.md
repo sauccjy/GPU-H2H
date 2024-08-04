@@ -38,6 +38,7 @@ v 2 4.0 10.2            //vertex 2 and it's (Longitude, Latitude) = (4.0, 10.2)
 
 We also use partitioning to generate orders. Directory ./Partition/13 covers two partition result. 
 Such partitions are the results of https://github.com/sauccjy/PartitionForGPUH2H.git. 
+The results in our paper are obtained by using latitude-longitude partitioning, but not minimum cut.
 
 The partition results can be arbitrary as long as it meets the following format requirements.
 
