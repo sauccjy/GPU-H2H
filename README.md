@@ -8,6 +8,7 @@ We use the nvcc compiler to compile our code. Our g++ version is 11.2, nvcc vers
 
 Although the Thrust library only requires a compute capacity of 2.0 or above, in order to exploit the GPU performance, please use a NVIDIA GPU with at least 5.0 or above compute capacity.
 
+Some devices may need gcc_10 or lower compiler version: '-ccbin /usr/bin/gcc-10', and choose & link standard liberay: '-std=c++14' and '-lstdc++', '-lm'.
 
 ## Compile
 
@@ -65,7 +66,7 @@ The format of ''xxxCut.txt'' (latitudeCut.txt) is:
 ## Run
 After compiling, we run next code to construct Label.
 ```
-./G2H GraphName PartitionHeight ChangeToGlobalHeight useGPUContract useGPUConstruct isQuery
+./G2H GraphName PartitionHeight ChangeToGlobalHeight threadNum partitionMethod useGPUContract parallelFine useGPUConstruct
 ```
 
 'GraphName' represents the graph;
@@ -74,20 +75,33 @@ After compiling, we run next code to construct Label.
 
 'ChangeToGlobalHeight' represents the layer switch to CPU-Global Contraction;
 
-'useGPUContract' is a bool type, if useGPUContract == 0, then contract on CPU, and == 1 on GPU;
+'threadNum' represents max thread number on CPU;
+
+'partitionMethod' represents partitioning way (only read files in ./Partition/'GraphName'/): 
+1) if == 1, use XYCoord partitioning;
+2) if == 2, use HC2L-like Partitioning;
+3) if == 3, use METIS; 
+4) if == 4, use SCOTCH;
+   *Notice: there is no partition code in this link. Please copy the partitioning results to ./Partition/'GraphName'/;
+
+'useGPUContract' is a bool type, if useGPUContract == 0, then contract on CPU, and == 1 on GPU-hybrid;
+
+'parallelFine' is a int type, 
+1) if == 0, construct labels Sequentially;
+2) if == 1, PF method;
+3) if == 2, LL method; 
 
 'useGPUConstruct' is a bool type too, if useGPUConstruct == 0, then construct on CPU, and == 1 on GPU;
 
-'isQuery' == 0 means not query, and == 1 will run queries from 10K to 1.5M with step = 1K;
 
 For example, 
 ```
-./G2H 13 4 1 1 1 0
+./G2H 13 4 1 20 1 1 2 1
 ```
-will contract 4 - 1 layers on GPU but rest on CPU,  and construct labels on GPU, and not query. 
+will contract 4 - 1 layers on GPU but rest on CPU,  and construct labels on GPU with LL frontier method. 
 
-After the end of construction, construct information will be recorded at './ConstructInfo/13/GPU-GPU.csv'.
-If answered query, query time will be recorded at './QueryResult/13/xxx.csv'.
+After the end of construction, construct information will be recorded at './ConstructInfo/GraphName/'.
+If answered query, query time will be recorded at './QueryResult/graphName/'.
 
 
 ## Difference between L3-Label and L4-Label
