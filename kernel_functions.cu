@@ -22,7 +22,7 @@ namespace tools {
     void bobbleSortPairs(Graph_D_H::TDrank* array, int left, int right)
     {
         for (int i = left; i <= right; i++) {
-            bool swapped = false;
+            //bool swapped = false;
 
             for (int j = left; j <= right - 1; j++) {
                 if (array[j + 1] < array[j]) {
@@ -30,13 +30,13 @@ namespace tools {
                     array[j] = array[j + 1];
                     array[j + 1] = temp;
 
-                    swapped = true;
+                    //swapped = true;
                 }
             }
 
-            if (!swapped) {
-                break;
-            }
+            //if (!swapped) {
+            //    break;
+            //}
         }
     }
 
@@ -44,7 +44,7 @@ namespace tools {
         void bobbleSortPairs_2(Graph_D_H::TDrank* array, int left, int right)
     {
         for (int i = left; i <= right; i++) {
-            bool swapped = false;
+            //bool swapped = false;
 
             for (int j = left; j <= right - 1; j++) {
                 if (array[j + 1] < array[j]) {
@@ -52,13 +52,13 @@ namespace tools {
                     array[j] = array[j + 1];
                     array[j + 1] = temp;
 
-                    swapped = true;
+                    //swapped = true;
                 }
             }
 
-            if (!swapped) {
-                break;
-            }
+            //if (!swapped) {
+               // break;
+            //}
         }
     }
 
@@ -467,6 +467,7 @@ void makeCHPerHeight_D_2(int lowestIndexStart, int lowestIndexEnd,
             int HeightNow = nonAdjcentNode[j].third;
             CHInfo[outpoint].first = CHTreeHash[ID_hash[outpoint]].first;// global degree
             CHInfo[outpoint].second = (HeightNow + 1 > CHInfo[outpoint].second) ? HeightNow + 1 : CHInfo[outpoint].second;//global height
+            
         }
         for (int k = j + 1; k < nonAdjStartIndex + TDNodeSize; k++)
         {
@@ -715,7 +716,7 @@ void makeH2HLabel_noCommunication(int tempHeight, int cudaThreadNum,
 
 __global__ void makeH2HLabel_noCommunication_D_noHub_3(
     int64_t* H2H_dis_hash, int* H2H_dis,
-    int* TreeBFS_ID, int* TreeBFS_adj, int* TreeBFS_pos,
+    int* TreeBFS_ID, int* TreeBFS_adj, int* TreeBFS_pos, //int* TreeBFS_changeTime,
     int* father,
     int64_t startIndex, int64_t endIndex
 ) {
@@ -735,11 +736,11 @@ __global__ void makeH2HLabel_noCommunication_D_noHub_3(
     }
 
     //L4 label
-    int fatherID = nodeID;
-    for (int64_t j = (int)(H2H_dis_hash[nodeID + 1] - H2H_dis_hash[nodeID]) - 2; j > pos; j--) {
-        fatherID = father[fatherID];
-        atomicMin(&H2H_dis[indexNode + j], (tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos]));
-    }
+    //int fatherID = nodeID;
+    //for (int64_t j = (int)(H2H_dis_hash[nodeID + 1] - H2H_dis_hash[nodeID]) - 2; j > pos; j--) {
+    //    fatherID = father[fatherID];
+    //    atomicMin(&H2H_dis[indexNode + j], (tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos]));
+    //}
 }
 
 
@@ -750,6 +751,7 @@ double makeH2HLabel_noCommunication_noHub_3(int tempHeight, int cudaThreadNum,
     thrust::device_vector<int>& TreeBFS_ID_D,
     thrust::device_vector<int>& TreeBFS_adj_D,
     thrust::device_vector<int>& TreeBFS_pos_D,
+    //thrust::device_vector<int>& TreeBFS_changeTime_D,
     thrust::device_vector<int>& father_D,
 
     thrust::host_vector<int64_t>& TreeBFS_Hash
@@ -763,6 +765,7 @@ double makeH2HLabel_noCommunication_noHub_3(int tempHeight, int cudaThreadNum,
     int* TreeBFS_ID = thrust::raw_pointer_cast(TreeBFS_ID_D.data());
     int* TreeBFS_adj = thrust::raw_pointer_cast(TreeBFS_adj_D.data());
     int* TreeBFS_pos = thrust::raw_pointer_cast(TreeBFS_pos_D.data());
+    //int* TreeBFS_changeTime = thrust::raw_pointer_cast(TreeBFS_changeTime_D.data());
     int* father = thrust::raw_pointer_cast(father_D.data());
     cudaEvent_t start, stop;
     double Usingtime = 0;
@@ -778,7 +781,7 @@ double makeH2HLabel_noCommunication_noHub_3(int tempHeight, int cudaThreadNum,
         int blockSize = size / cudaThreadNum + 1;
         cudaEventRecord(start);
 
-        makeH2HLabel_noCommunication_D_noHub_3<<<blockSize, cudaThreadNum >>>(H2H_dis_hash, H2H_dis, TreeBFS_ID, TreeBFS_adj, TreeBFS_pos, father, startIndex, endIndex);
+        makeH2HLabel_noCommunication_D_noHub_3 << <blockSize, cudaThreadNum >> > (H2H_dis_hash, H2H_dis, TreeBFS_ID, TreeBFS_adj, TreeBFS_pos, father, startIndex, endIndex);
 
         cudaEventRecord(stop);
         cudaEventSynchronize(stop);
@@ -825,16 +828,16 @@ __global__ void makeH2HLabel_noCommunication_D_noHub(
         }
 
         //L4 label
-        int fatherID = nodeID;
-        for (int64_t j = (int)(H2H_dis_hash[nodeID + 1] - H2H_dis_hash[nodeID]) - 2; j > pos; j--) {
-            fatherID = father[fatherID];
-            bool check = H2H_dis[indexNode + j] > tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos];
-            H2H_dis[indexNode + j] = check * (tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos]) + (!check) * (H2H_dis[indexNode + j]);
+        //int fatherID = nodeID;
+        //for (int64_t j = (int)(H2H_dis_hash[nodeID + 1] - H2H_dis_hash[nodeID]) - 2; j > pos; j--) {
+        //    fatherID = father[fatherID];
+        //    bool check = H2H_dis[indexNode + j] > tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos];
+        //    H2H_dis[indexNode + j] = check * (tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos]) + (!check) * (H2H_dis[indexNode + j]);
 
-            //if (H2H_dis[indexNode + j] > tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos]) {
-            //    H2H_dis[indexNode + j] = tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos];
-            //}
-        }
+        //    //if (H2H_dis[indexNode + j] > tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos]) {
+        //    //    H2H_dis[indexNode + j] = tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos];
+        //    //}
+        //}
     }
 }
 
@@ -883,7 +886,7 @@ double makeH2HLabel_noCommunication_noHub(int tempHeight, int cudaThreadNum,
         float milliseconds = 0;
         cudaEventElapsedTime(&milliseconds, start, stop);
         Usingtime += milliseconds*1000;
-        std::cout <<"At height: "<< i << " Kernel execution time: " << milliseconds << " ms" << std::endl;
+        //std::cout <<"At height: "<< i << " Kernel execution time: " << milliseconds << " ms" << std::endl;
     }
     cudaEventDestroy(start);
     cudaEventDestroy(stop);
@@ -917,13 +920,13 @@ __global__ void makeH2HLabel_noCommunication_D_noHub_2(
             }
 
             //L4 label
-            int fatherID = nodeID;
-            for (int j = (int)(H2H_dis_hash[nodeID + 1] - H2H_dis_hash[nodeID]) - 2; j > pos; j--) {
-                fatherID = father[fatherID];
-                if (H2H_dis[indexNode + j] > tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos]) {
-                    H2H_dis[indexNode + j] = tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos];
-                }
-            }
+            //int fatherID = nodeID;
+            //for (int j = (int)(H2H_dis_hash[nodeID + 1] - H2H_dis_hash[nodeID]) - 2; j > pos; j--) {
+            //    fatherID = father[fatherID];
+            //    if (H2H_dis[indexNode + j] > tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos]) {
+            //        H2H_dis[indexNode + j] = tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos];
+            //    }
+            //}
         }
 
     }
@@ -966,7 +969,7 @@ void makeH2HLabel_noCommunication_noHub_2(int cudaThreadNum,
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
 
-        // ����ʱ��
+        // \BC\C6\CB\E3ʱ\BC\E4
         float milliseconds = 0;
     cudaEventElapsedTime(&milliseconds, start, stop);
 

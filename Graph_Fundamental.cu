@@ -132,30 +132,20 @@ void Graph_D_H::Graph::checklink()
 void Graph_D_H::Graph::printConstructInfo()
 {
 	string constructData = "./ConstructInfo/"+graphName+"/";
-	if(ContractM == 1 && ConstructMethod == 1){
-		constructData += "CPU-CPU.csv";
+
+	constructData += "constructInfo.csv";
+	
+	bool checkExistFile = false;
+	{
+		std::ifstream file(constructData);
+		checkExistFile = file.good();
 	}
-	if(ContractM == 2 && ConstructMethod == 1){
-		constructData += "GPU-CPU.csv";
-	}
-	if(ContractM == 1 && ConstructMethod == 2){
-		constructData += "CPU-GPU.csv";
-	}
-	if(ContractM == 2 && ConstructMethod == 2){
-		constructData += "GPU-GPU.csv";
-	}
-	// if (ConstructMethod == 1) {
-	// 	constructData += "MultiThread.csv";
-	// }
-	// else {
-	// 	constructData += "GPUHybrid.csv";
-	// }
 
 	//string constructData = "constructInfo.csv";
 	std::ofstream outputFile(constructData, std::ios::app);
 	if (outputFile.is_open()) {
-
-		outputFile << "graphName,PartitionTreeHeight,changeHeight,ParititionTime,makePartitionRankTreeTime,AlllocateLUBTime,LUBSize,translateLUBToGPUTime,TDInGPUTime,translateBackAndMallocToCPUTime,vertexesConstructedInGPU,DecompositionTreeSize,TDInCPUTime,TDTREEHeight,,RMQsize,translateRMQTime,H2HLabelSize,,changeConstructDeviceSize,H2HmallocTime,H2HConstructBFSTreeTime,H2HTranslateBFSTreeTime,H2HUsingTime_CPU,H2HTranslateTime,H2HUsingTime_GPU,PartitionMethod,PartitionMethod\n";
+		if(!checkExistFile)
+		outputFile << "graphName,PartitionTreeHeight,changeHeight,ParititionTime,makePartitionRankTreeTime,AlllocateLUBTime,LUBSize,translateLUBToGPUTime,TDInGPUTime,translateBackAndMallocToCPUTime,vertexesConstructedInGPU,DecompositionTreeSize,TDInCPUTime,TDTREEHeight,,RMQsize,translateRMQTime,H2HLabelSize,,changeConstructDeviceSize,H2HmallocTime,H2HConstructBFSTreeTime,H2HTranslateBFSTreeTime,H2HUsingTime_CPU,H2HTranslateTime,H2HUsingTime_GPU,PartitionMethod,threadNum,contractDevice,parallelFine,constructDevice\n";
 
 		outputFile << graphName << "," << TreeHeight << "," << changeHeight << "," << partitionTime 
 			<< "," << makePartitionRankTreeTime << "," << AllocateLUBTime << ","
@@ -166,7 +156,9 @@ void Graph_D_H::Graph::printConstructInfo()
 			<< translateRMQTime << "," << H2HLabelSize << ",," << changeConstructDeviceSize << "," 
 			<< H2HmallocTime << "," << H2HConstructBFSTreeTime << "," << H2HTranslateBFSTreeTime 
 			<< "," << H2HUsingTime_CPU << "," << H2HTranslateTime 
-			<< "," << H2HUsingTime_GPU <<","<< PartitionMethod << "\n";
+			<< "," << H2HUsingTime_GPU <<","<< PartitionMethod <<"," << threadNumber << "," << contractDevice <<
+			"," << parallelFine << "," << constructDevice <<
+			"\n";
 
 
 		outputFile.close();

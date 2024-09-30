@@ -157,7 +157,7 @@ namespace Graph_D_H
 		time.updateStart();
 
 		for (int i = 0; i < size; i++) {
-			result[i] = H2HDistancQuery_UsingLCA_noHub(x[i], y[i]);
+			result[i] = H2HDistancQuery_noLCA_noHub(x[i], y[i]);
 		}
 
 		time.updateEnd();
@@ -186,7 +186,7 @@ namespace Graph_D_H
 			end = min((size_t)size, (i + 1) * chunkSize);
 			threads.emplace_back([&, start, end] {
 				for (size_t j = start; j < end; ++j) {
-					result[j] = H2HDistancQuery_UsingLCA_noHub(x[j], y[j]);
+					result[j] = H2HDistancQuery_noLCA_noHub(x[j], y[j]);
 				}
 				});
 		}
@@ -492,7 +492,7 @@ namespace Graph_D_H
 		bool MTContinue_12 = true;
 		bool MTContinue_14 = true;
 		bool MTContinue_16 = true;
-		for (int i = 10000; i <= queryMaxSize; i += queryStep) {
+		for (int i = queryMaxSize; i <= queryMaxSize; i += queryStep) {
 
 			if (seqContinue) {
 				long long int seqtime = H2Hquery_bunch_noHub(i);
@@ -594,22 +594,29 @@ namespace Graph_D_H
 			QueryTime_noLCA_1024.push_back(H2Hquery_bunch_noLCA_D_noHub(i));
 			QueryTime_LCA_1024.push_back(H2Hquery_bunch_UsingLCA_D_noHub(i));
 		}
-		string resultFile = "./QueryResult/" + graphName + "/PTHeight-" + to_string(TreeHeight) + "-ChangeHeight-" + to_string(changeHeight) + "-random.csv";
+		string resultFile = "./QueryResult/" + graphName + "/random.csv";
+
+		bool checkexistFile = false;
+		{
+			std::ifstream file(resultFile);
+			checkexistFile = file.good();
+		}
+
 		fstream queryresult(resultFile, ios::app | ios::in | ios::out);
 		if (queryresult.is_open()) {
-			//queryresult << "CPUThreadNum,CUDAThreadNum\n";
-			//queryresult <<threadNumber<<","<< cudaThreadNum << "\n";
-			//if(queryresult.peek() == std::ifstream::traits_type::eof())
-			queryresult << "queryNumber,sequence,multiThread-4,multiThread-6,multiThread-8,multiThread-10,multiThread-12,multiThread-14,multiThread-16,GPUnoLCA-64,GPUwithLCA-64,GPUnoLCA-128,GPUwithLCA-128,GPUnoLCA-256,GPUwithLCA-256,GPUnoLCA-512,GPUwithLCA-512,GPUnoLCA-1024,GPUwithLCA-1024\n";
+			if(!checkexistFile)
+			queryresult << "queryNumber,sequence,multiThread-4,multiThread-6,multiThread-8,multiThread-10,multiThread-12,multiThread-14,multiThread-16,GPUnoLCA-64,GPUwithLCA-64,GPUnoLCA-128,GPUwithLCA-128,GPUnoLCA-256,GPUwithLCA-256,GPUnoLCA-512,GPUwithLCA-512,GPUnoLCA-1024,GPUwithLCA-1024,TreeHeight,changeHeight,PartitionMethod,contractDevice\n";
 			for (int i = 0; i < QueryTime_seq.size(); i++) {
-				queryresult << 10000 + i * queryStep << "," << QueryTime_seq[i] << "," << QueryTime_MT_4[i] << ","
+				queryresult << queryMaxSize << "," << QueryTime_seq[i] << "," << QueryTime_MT_4[i] << ","
 					<< QueryTime_MT_6[i] << "," << QueryTime_MT_8[i] << "," << QueryTime_MT_10[i] << "," << QueryTime_MT_12[i] << ","
 					<< QueryTime_MT_14[i] << "," << QueryTime_MT_16[i] << ","
 					<< QueryTime_noLCA_64[i] << "," << QueryTime_LCA_64[i] << ","
 					<< QueryTime_noLCA_128[i] << "," << QueryTime_LCA_128[i] << ","
 					<< QueryTime_noLCA_256[i] << "," << QueryTime_LCA_256[i] << ","
 					<< QueryTime_noLCA_512[i] << "," << QueryTime_LCA_512[i] << ","
-					<< QueryTime_noLCA_1024[i] << "," << QueryTime_LCA_1024[i] << "\n";
+					<< QueryTime_noLCA_1024[i] << "," << QueryTime_LCA_1024[i] << 
+					"," << TreeHeight << "," << changeHeight << "," << PartitionMethod << "," << contractDevice <<
+					"\n";
 			}
 			queryresult.close();
 		}
@@ -629,7 +636,7 @@ namespace Graph_D_H
 		bool MTContinue_12 = true;
 		bool MTContinue_14 = true;
 		bool MTContinue_16 = true;
-		for (int i = 10000; i <= queryMaxSize; i += queryStep) {
+		for (int i = queryMaxSize; i <= queryMaxSize; i += queryStep) {
 
 			if (seqContinue) {
 				long long int seqtime = H2Hquery_bunch_noHub(i);

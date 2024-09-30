@@ -50,6 +50,53 @@ namespace Graph_D_H
 		father_D = father;
 		cout << "H2H_Size: " << (double)(H2H_Size * sizeof(int)) / (1024 * 1024) << endl;
 		cleanBeforeConstruct();
+
+				if(1)
+		{
+			string constructData = "./ConstructInfo/"+graphName+"/";
+
+			constructData += "contract.csv";
+	
+			bool checkExistFile = false;
+			{
+				std::ifstream file(constructData);
+				checkExistFile = file.good();
+			}
+
+			TDTREEHeight = CHTreeHeight;
+
+			/////////////////////////////////////////////////////////////
+			H2HLabelSize = ((double)(sizeof(int64_t) * 2 * NodeNumber +
+				size1 * sizeof(int) + H2H_Size * sizeof(int))) / (1024 * 1024);
+
+
+			//string constructData = "constructInfo.csv";
+			std::ofstream outputFile(constructData, std::ios::app);
+			if (outputFile.is_open()) {
+				if(!checkExistFile)
+				outputFile << "graphName,PartitionTreeHeight,changeHeight,ParititionTime,makePartitionRankTreeTime,AlllocateLUBTime,LUBSize,translateLUBToGPUTime,TDInGPUTime,translateBackAndMallocToCPUTime,vertexesConstructedInGPU,DecompositionTreeSize,TDInCPUTime,TDTREEHeight,,RMQsize,translateRMQTime,H2HLabelSize,,changeConstructDeviceSize,H2HmallocTime,H2HConstructBFSTreeTime,H2HTranslateBFSTreeTime,H2HUsingTime_CPU,H2HTranslateTime,H2HUsingTime_GPU,PartitionMethod,threadNum,contractDevice,parallelFine,constructDevice\n";
+
+				outputFile << graphName << "," << TreeHeight << "," << changeHeight << "," << partitionTime 
+					<< "," << makePartitionRankTreeTime << "," << AllocateLUBTime << ","
+					<< LUBSize << "," << translateLUBToGPUTime << "," << TDInGPUTime << "," 
+					<< translateBackAndMallocToCPUTime << "," 
+					<< vertexesConstructedInGPU << "," << DecompositionTreeSize 
+					<< "," << TDInCPUTime << "," << TDTREEHeight << ",," << RMQsize << "," 
+					<< translateRMQTime << "," << H2HLabelSize << ",," << changeConstructDeviceSize << "," 
+					<< H2HmallocTime << "," << H2HConstructBFSTreeTime << "," << H2HTranslateBFSTreeTime 
+					<< "," << H2HUsingTime_CPU << "," << H2HTranslateTime 
+					<< "," << H2HUsingTime_GPU <<","<< PartitionMethod <<"," << threadNumber << "," << contractDevice <<
+					"," << parallelFine << "," << constructDevice <<
+					"\n";
+
+
+				outputFile.close();
+				//std::cout << "Data has been written to output.csv\n";
+			}
+			else {
+				std::cerr << "Unable to open file for writing.\n";
+			}
+		}
 	}
 
 	void Graph_D_H::Graph::getrank()

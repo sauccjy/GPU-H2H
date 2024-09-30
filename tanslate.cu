@@ -467,13 +467,13 @@ namespace Graph_D_H
 										tempLength_ + H2H_dis[index1_adj + (int64_t)j]);
 								}
 								// L4 label
-								int64_t fatherID = nodeID;
-								for (int j = (int)(H2H_dis_hash[nodeID + 1] - H2H_dis_hash[nodeID]) - 2; j > pos; j--) {
-									fatherID = (int64_t)father[fatherID];
+								//int64_t fatherID = nodeID;
+								//for (int j = (int)(H2H_dis_hash[nodeID + 1] - H2H_dis_hash[nodeID]) - 2; j > pos; j--) {
+								//	fatherID = (int64_t)father[fatherID];
 
-									H2H_dis[indexNode + (int64_t)j] = std::min(H2H_dis[indexNode + (int64_t)j],
-										tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + (int64_t)pos]);
-								}
+								//	H2H_dis[indexNode + (int64_t)j] = std::min(H2H_dis[indexNode + (int64_t)j],
+								//		tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + (int64_t)pos]);
+								//}
 							}
 						}
 					}
@@ -553,13 +553,13 @@ namespace Graph_D_H
 										tempLength_ + H2H_dis[index1_adj + (int64_t)j]);
 								}
 								// L4 label
-								int64_t fatherID = nodeID;
-								for (int j = (int)(H2H_dis_hash[nodeID + 1] - H2H_dis_hash[nodeID]) - 2; j > pos; j--) {
-									fatherID = (int64_t)father[fatherID];
+								//int64_t fatherID = nodeID;
+								//for (int j = (int)(H2H_dis_hash[nodeID + 1] - H2H_dis_hash[nodeID]) - 2; j > pos; j--) {
+								//	fatherID = (int64_t)father[fatherID];
 
-									H2H_dis[indexNode + (int64_t)j] = std::min(H2H_dis[indexNode + (int64_t)j],
-										tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + (int64_t)pos]);
-								}
+								//	H2H_dis[indexNode + (int64_t)j] = std::min(H2H_dis[indexNode + (int64_t)j],
+								//		tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + (int64_t)pos]);
+								//}
 							}
 						}
 					}
@@ -585,13 +585,14 @@ namespace Graph_D_H
 		TreeBFS_ID_D = TreeBFS_ID;
 		TreeBFS_adj_D = TreeBFS_adj;
 		TreeBFS_pos_D = TreeBFS_pos;
+		//TreeBFS_changeTime_D = TreeBFS_changeTime;
 		time.updateEnd();
 		H2HTranslateTime = time.get_microsecond_duration();
 		cout << "\t translate H2H end, using time: " << time.get_microsecond_duration() << endl;
 
 		cout << "H2H construct in GPU start " << endl;
 		H2HUsingTime_GPU = makeH2HLabel_noCommunication_noHub_3(tempHeight11111, cudaThreadNum, H2H_dis_hash_D, H2H_dis_D, 
-			TreeBFS_ID_D, TreeBFS_adj_D, TreeBFS_pos_D,
+			TreeBFS_ID_D, TreeBFS_adj_D, TreeBFS_pos_D, //TreeBFS_changeTime_D,
 			father_D, TreeBFS_Hash);
 		//H2HUsingTime_GPU = time.get_microsecond_duration();
 		cout << "\t construct H2H end, using time: " << H2HUsingTime_GPU << endl;

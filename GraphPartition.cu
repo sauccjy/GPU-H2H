@@ -21,7 +21,7 @@ namespace Graph_D_H
 
 		NANHash.assign(partition_Tree.size(), myPair<int>());
 		nonAdjcentNode.clear();
-		//vector<double> afs(TreeHeight + 1, 0);
+		vector<double> afs(TreeHeight + 1, 0);
 		while (tempHeight > goalHeight)
 		{
 			int lowestIndexStart = std::pow(2, tempHeight - 1) - 1;
@@ -68,7 +68,7 @@ namespace Graph_D_H
 				}
 			}
 			isAdjcent = isAdjcent_cp;
-			//afs[tempHeight] = nonAdjcentNode.size();
+			afs[tempHeight] = nonAdjcentNode.size();
 			tempHeight--;
 		}
 
@@ -77,18 +77,20 @@ namespace Graph_D_H
 		time.updateEnd();
 		makePartitionRankTreeTime = time.get_microsecond_duration();
 		cout << "\t construct Partition Rank tree end,  using time: " << time.get_microsecond_duration() << endl;
-		//string latitudePartition = "LatitudePartitionRate.csv";
-		//if (PartitionMethod == 2) latitudePartition = "MinimumPartitionRate.csv";
-		//std::fstream heightdata(latitudePartition, ios::in | ios::out | ios::app);
+		string latitudePartition = "LatitudePartitionRate.csv";
+		if (PartitionMethod == 2) latitudePartition = "MinimumPartitionRate.csv";
+		if (PartitionMethod == 3) latitudePartition = "metisPartitionRate.csv";
+		if (PartitionMethod == 4) latitudePartition = "scotchPartitionRate.csv";
+		std::fstream heightdata(latitudePartition, ios::in | ios::out | ios::app);
 
-		//heightdata << graphName << ",";
+		heightdata << graphName << ",";
 		////cout << "NodeNumber per layer: \n";
-		//for (int i = 1; i < afs.size(); i++) {
-		//	heightdata << afs[i] / NodeNumber << ",";
-		//	//cout << "\t layer : " << i << " size: " << std::fixed << afs[i] << endl;
-		//}
-		//heightdata << "\n";
-		//heightdata.close();
+		for (int i = 1; i < afs.size(); i++) {
+			heightdata << afs[i] / NodeNumber << ",";
+			cout << "\t layer : " << i << " size: " << std::fixed << afs[i] << endl;
+		}
+		heightdata << "\n";
+		heightdata.close();
 
 		//allowcate CHTree
 		cout << "start Allocate LUB " << endl;

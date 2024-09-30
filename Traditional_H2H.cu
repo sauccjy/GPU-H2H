@@ -36,6 +36,7 @@ namespace Graph_D_H
 		int tempHeight = tempheight;
 		CHInfo.assign(NodeNumber, pairs());
 		CHChild.assign(NodeNumber, 0);
+		DBC.assign(NodeNumber, 1);
 		//bool haveless = false;
 		//int wrongSize = 0;
 		cout << "clear finished!" << endl;
@@ -306,10 +307,13 @@ namespace Graph_D_H
 				int neiID = nei[i];
 				int height = max(Graph_D_H::CHInfo[TDNodeNow].second + 1, Graph_D_H::CHInfo[neiID].second);
 				if (height == Graph_D_H::CHInfo[neiID].second) {
-					CHChild[neiID]++;
+					//CHChild[neiID]++;
+					//DBC[neiID] = DBC[neiID] * (CHChild[TDNodeNow] + 1);
+					CHChild[neiID] += CHChild[TDNodeNow] + 1;
 				}
 				else {
-					CHChild[neiID] = 1;
+					CHChild[neiID] = 1 + CHChild[TDNodeNow];
+					//DBC[neiID] =1 + CHChild[TDNodeNow];
 				}
 				Graph_D_H::CHInfo[neiID].pairsReset(CHAdjlist[neiID].size(), height);
 				//if(!visited[neiID])
@@ -320,7 +324,7 @@ namespace Graph_D_H
 
 		int head = nonAdjcentNode[nonAdjcentNode.size() - 1].second;
 		std::cout << "head: " << head << "and  CH adjlist size: " << CHAdjlist[head].size() << endl;
-		long long int size1 = 0;
+
 		for (auto& it : CHAdjlist) {
 			size1 += it.size() + 1;
 		}
@@ -360,6 +364,7 @@ namespace Graph_D_H
 
 		CHInfo.assign(NodeNumber, pairs());
 		CHChild.assign(NodeNumber, 0);
+		DBC.assign(NodeNumber, 1);
 		//loading CHAdjList
 		for (int i = 0; i < NodeNumber; i++) {
 			for (auto& it : adjList[i]) {
@@ -449,10 +454,11 @@ namespace Graph_D_H
 								int neiID = nei[it];
 								int height = max(Graph_D_H::CHInfo[TDNodeNow].second + 1, Graph_D_H::CHInfo[neiID].second);
 								if (height == Graph_D_H::CHInfo[neiID].second) {
-									CHChild[neiID]++;
+									//CHChild[neiID]++;
+									CHChild[neiID] += CHChild[TDNodeNow];
 								}
 								else {
-									CHChild[neiID] = 1;
+									CHChild[neiID] = 1 + CHChild[TDNodeNow];
 								}
 								Graph_D_H::CHInfo[neiID].pairsReset(CHAdjlist[neiID].size(), height);
 

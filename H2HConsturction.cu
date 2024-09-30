@@ -324,9 +324,9 @@ namespace Graph_D_H
 	void Graph_D_H::Graph::constructBFSTree()
 	{
 		queue<int> frontier;
-		// int maxLabelWidth = 1;
-		// int tempHeight = 0;
-		// int height = 0;
+		int maxLabelWidth = 1;
+		int tempHeight = 0;
+		int height = 0;
 		set<int> vertexInMaxWitdh = {};
 		TreeHash.push_back(0);
 		TreeBFS.push_back(head);
@@ -336,6 +336,7 @@ namespace Graph_D_H
 		TreeBFS_ID.push_back(head);
 		TreeBFS_adj.push_back(head);
 		TreeBFS_pos.push_back(0);
+		//TreeBFS_changeTime.push_back(0);
 		TreeBFS_Hash.push_back(1);
 
 		for (int i = ChildHash[head].second; i < ChildHash[head].second + ChildHash[head].first; i++)
@@ -356,6 +357,7 @@ namespace Graph_D_H
 					TreeBFS_ID.push_back(ID);
 					TreeBFS_adj.push_back(H2H_pos_ID[index]);
 					TreeBFS_pos.push_back(H2H_pos_POS[index]);
+					//TreeBFS_changeTime.push_back(H2H_pos_hash[ID + 1] - 2 - index);
 				}
 				for (int j = ChildHash[ID].second; j < ChildHash[ID].second + ChildHash[ID].first; j++)
 				{
@@ -534,6 +536,7 @@ namespace Graph_D_H
 		frontier_Hash_D = frontier_Hash;
 		frontier_ID_D = frontier_ID;
 		TreeBFS_D = TreeBFS;
+		//TreeBFS_changeTime_D = TreeBFS_changeTime;
 		time.updateEnd();
 		H2HTranslateBFSTreeTime = time.get_microsecond_duration();
 		std::cout << "\t bfs translate end, using time: " << time.get_microsecond_duration() << std::endl;
@@ -560,6 +563,58 @@ namespace Graph_D_H
 		frontier_ID_D.shrink_to_fit();
 	}
 
+	void Graph_D_H::Graph::inConstructH2H_noHub_D_2()
+	{
+		//malloc
+		Graph_D_H::time_Mine time;
+		std::cout << "malloc H2H label start " << std::endl;
+		time.updateStart();
+		mallocH2HLabel_noHub();
+		time.updateEnd();
+		H2HmallocTime = time.get_microsecond_duration();
+		std::cout << "\t malloc end, using time: " << time.get_microsecond_duration() << std::endl;
+
+
+		//constructBFSTree
+		std::cout << "construct bfs tree start " << endl;
+		time.updateStart();
+		constructBFSTree();
+		time.updateEnd();
+		H2HConstructBFSTreeTime = time.get_microsecond_duration();
+		std::cout << "\t bfs construct end, using time: " << time.get_microsecond_duration() << std::endl;
+
+		std::cout << "translate bfs tree start " << std::endl;
+		time.updateStart();
+		frontier_Hash_D = frontier_Hash;
+		frontier_ID_D = frontier_ID;
+		TreeBFS_D = TreeBFS;
+		//TreeBFS_changeTime_D = TreeBFS_changeTime;
+		time.updateEnd();
+		H2HTranslateBFSTreeTime = time.get_microsecond_duration();
+		std::cout << "\t bfs translate end, using time: " << time.get_microsecond_duration() << std::endl;
+		//make
+		//displayH2H_noHub();
+
+		makeH2HLabel_noHub_noComm_2();
+		//makeH2HLabel_noHub_noComm_3();
+		H2H_dis = H2H_dis_D;
+
+		//H2H_pos_ID_D.clear();
+		//H2H_pos_ID_D.shrink_to_fit();
+		//H2H_pos_ID.clear();
+		//H2H_pos_ID.shrink_to_fit();
+
+		frontier_Hash.clear();
+		frontier_Hash.shrink_to_fit();
+		frontier_Hash_D.clear();
+		frontier_Hash_D.shrink_to_fit();
+		frontier_ID.clear();
+		frontier_ID.shrink_to_fit();
+		frontier_ID_D.clear();
+		frontier_ID_D.shrink_to_fit();
+	}
+
+
 	void Graph_D_H::Graph::mallocH2HLabel_noHub()
 	{
 		int totalSize = 0;
@@ -575,6 +630,7 @@ namespace Graph_D_H
 		//H2H_pos_POS.assign(totalSize, -1);
 		cout << "\t CPU allocate start! " << endl;
 
+		try{
 		H2H_pos_hash.push_back(0);
 		H2H_dis_hash.push_back(0);
 		for (int i = 0; i < NodeNumber; i++) {
@@ -596,7 +652,11 @@ namespace Graph_D_H
 			thrust::sort_by_key(H2H_pos_POS.begin() + H2H_pos_hash[i], H2H_pos_POS.end(),
 				H2H_pos_ID.begin() + H2H_pos_hash[i]);
 		}
-
+		}
+		catch(const std::bad_alloc& e){
+				std::cerr << "bad allocate : " << e.what() <<" at RAM-label-allocation"<< '\n';  
+				std::exit(1);
+		}
 		//int64_t posTemp = 0;
 		//int64_t distemp = 0;
 		//for (auto nodeID = 0; nodeID < NodeNumber; nodeID++) {
@@ -720,13 +780,13 @@ namespace Graph_D_H
 							tempLength_ + H2H_dis[index1_adj + (int64_t)j]);
 					}
 					// L4 label
-					int64_t fatherID = nodeID;
-					for (int j = (int)(H2H_dis_hash[nodeID + 1] - H2H_dis_hash[nodeID]) - 2; j > pos; j--) {
-						fatherID = (int64_t)father[fatherID];
+					//int64_t fatherID = nodeID;
+					//for (int j = (int)(H2H_dis_hash[nodeID + 1] - H2H_dis_hash[nodeID]) - 2; j > pos; j--) {
+					//	fatherID = (int64_t)father[fatherID];
 
-						H2H_dis[indexNode + (int64_t)j] = std::min(H2H_dis[indexNode + (int64_t)j],
-							tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + (int64_t)pos]);
-					}
+					//	H2H_dis[indexNode + (int64_t)j] = std::min(H2H_dis[indexNode + (int64_t)j],
+					//		tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + (int64_t)pos]);
+					//}
 				}
 			}
 		}
@@ -788,13 +848,13 @@ namespace Graph_D_H
 										tempLength_ + H2H_dis[index1_adj + (int64_t)j]);
 								}
 								// L4 label
-								int64_t fatherID = nodeID;
-								for (int j = (int)(H2H_dis_hash[nodeID + 1] - H2H_dis_hash[nodeID]) - 2; j > pos; j--) {
-									fatherID = (int64_t)father[fatherID];
+								//int64_t fatherID = nodeID;
+								//for (int j = (int)(H2H_dis_hash[nodeID + 1] - H2H_dis_hash[nodeID]) - 2; j > pos; j--) {
+								//	fatherID = (int64_t)father[fatherID];
 
-									H2H_dis[indexNode + (int64_t)j] = std::min(H2H_dis[indexNode + (int64_t)j],
-										tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + (int64_t)pos]);
-								}
+								//	H2H_dis[indexNode + (int64_t)j] = std::min(H2H_dis[indexNode + (int64_t)j],
+								//		tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + (int64_t)pos]);
+								//}
 							}
 						}
 					}
@@ -818,6 +878,106 @@ namespace Graph_D_H
 	}
 
 
+	void Graph::makeH2HLabel_noHub_multiThred_2()
+	{
+		Graph_D_H::time_Mine time;
 
+		std::cout << "construct H2H on CPU multi-thread start " << std::endl;
+		time.updateStart();
+
+		for (int64_t tempHeight = 0; tempHeight < (int64_t)TreeBFS_Hash.size() - 1; tempHeight++)
+		{
+			int64_t startIndex = TreeBFS_Hash[tempHeight];
+			int64_t endIndex = TreeBFS_Hash[tempHeight + 1];
+			Graph_D_H::time_Mine time1;
+			time1.updateStart();
+			int64_t tempThreadNum = min((int64_t)threadNumber, endIndex - startIndex);
+
+			int64_t tempSize = (endIndex - startIndex) / tempThreadNum + 1;
+			vector<vector<int64_t>> candidateHeap(tempThreadNum, vector<int64_t>());
+			int64_t it = 0, temp = 0;
+			for (int64_t i = startIndex; i < endIndex; i++) {
+				//int64_t ID = TreeBFS[i];
+				candidateHeap[it].emplace_back(i);
+				temp++;
+				if (temp == tempSize) {
+					it++;
+					temp = 0;
+				}
+			}
+			std::vector<std::thread> threads;
+
+			for (int i = 0; i < tempThreadNum; i++) {
+
+				threads.emplace_back(
+					[this, &candidateHeap, i]() {
+						for (auto& nodeIDindex : candidateHeap[i]) {
+
+							std::mutex mt;
+							int nodeID = TreeBFS_ID[nodeIDindex];
+							int adjID = TreeBFS_adj[nodeIDindex];
+							int pos = TreeBFS_pos[nodeIDindex];
+
+							int64_t indexNode = H2H_dis_hash[nodeID]; //current vertex's label position
+							int64_t index1_adj = H2H_dis_hash[adjID]; //ancestor's label position
+
+							int tempLength_ = H2H_dis[indexNode + pos];
+							for (int64_t j = pos - 1; j >= 0; j--) {
+
+								std::lock_guard<std::mutex> lock(mt);
+								H2H_dis[indexNode + j] = std::min(H2H_dis[indexNode + j], (tempLength_ + H2H_dis[index1_adj + j]));
+								//atomicMin(&H2H_dis[indexNode + j], (tempLength_ + H2H_dis[index1_adj + j]));
+							}
+
+							//L4_label
+							//int fatherID = nodeID;
+							//for (int64_t j = (int)(H2H_dis_hash[nodeID + 1] - H2H_dis_hash[nodeID]) - 2; j > pos; j--) {
+							//	fatherID = father[fatherID];
+							//	//atomicMin(&H2H_dis[indexNode + j], (tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos]));
+							//	std::lock_guard<std::mutex> lock(mt);
+							//	H2H_dis[indexNode + j] = std::min(H2H_dis[indexNode + j], (tempLength_ + H2H_dis[H2H_dis_hash[fatherID] + pos]));
+							//}
+
+						}
+					}
+				);
+			}
+
+			for (auto& its : threads) {
+				its.join();
+			}
+			time1.updateEnd();
+			//std::cout << "At height: " << tempHeight << " Kernel execution time: " << time1.get_microsecond_duration() / 1000 << " ms" << std::endl;
+
+		}
+		//translateBeforeQuery();
+		translateH2H_noHub();
+
+		time.updateEnd();
+		H2HUsingTime_CPU = time.get_microsecond_duration();
+		std::cout << "\t CPU construct end, using time: " << time.get_microsecond_duration() << std::endl;
+	}
+
+	void Graph_D_H::Graph::inConstructH2H_noHub_multiThread_2()
+	{
+		//malloc
+		Graph_D_H::time_Mine time;
+		std::cout << "malloc H2H label start " << std::endl;
+		time.updateStart();
+		mallocH2HLabel_noHub();
+		time.updateEnd();
+		H2HmallocTime = time.get_microsecond_duration();
+		std::cout << "\t malloc end, using time: " << time.get_microsecond_duration() << std::endl;
+
+		//constructBFSTree
+		std::cout << "construct bfs tree start " << endl;
+		time.updateStart();
+		constructBFSTree();
+		time.updateEnd();
+		H2HConstructBFSTreeTime = time.get_microsecond_duration();
+		std::cout << "\t bfs construct end, using time: " << time.get_microsecond_duration() << std::endl;
+		//make
+		makeH2HLabel_noHub_multiThred_2();
+	}
 
 }

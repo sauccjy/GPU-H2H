@@ -67,6 +67,7 @@ double makeH2HLabel_noCommunication_noHub_3(int tempHeight, int cudaThreadNum,
     thrust::device_vector<int>& TreeBFS_ID_D,
     thrust::device_vector<int>& TreeBFS_adj_D,
     thrust::device_vector<int>& TreeBFS_pos_D,
+    //thrust::device_vector<int>& TreeBFS_changeTime_D,
     thrust::device_vector<int>& father_D,
 
     thrust::host_vector<int64_t>& TreeBFS_Hash

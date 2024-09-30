@@ -157,17 +157,18 @@ namespace Graph_D_H
 				//return third + first + childSize < other.third + other.first + other.childSize;
 			//}
 			//else {
+			//if (third != other.third ) {
+				//return third < other.third;
+			//}
 				if (third + first != other.third + other.first) {
 					return third + first < other.third + other.first;
 				}
-				else {
-					if (first != other.first) {
-						return first < other.first;
-					}
-					else {
-						return second < other.second;
-					}
+				if (first != other.first) {
+					return first < other.first;
 				}
+				return second < other.second;
+
+				
 			//}
 		}
 		__host__ __device__
@@ -180,14 +181,12 @@ namespace Graph_D_H
 				if (third + first != other.third + other.first) {
 					return third + first > other.third + other.first;
 				}
-				else {
-					if (first != other.first) {
-						return first > other.first;
-					}
-					else {
-						return second > other.second;
-					}
+				if (first != other.first) {
+					return first > other.first;
 				}
+				return second > other.second;
+					
+				
 			//}
 		}
 		__host__ __device__
@@ -209,30 +208,18 @@ namespace Graph_D_H
 
 	static vector<pairs> CHInfo;
 	static vector<int> CHChild;
+	static vector<int64_t> DBC;
 	struct HostRank {
 		int x;
 		bool operator<(const HostRank& other) const
 		{
-			//if (CHInfo[x].first + CHInfo[x].second + CHChild[x] != CHInfo[other.x].first + CHInfo[other.x].second + CHChild[other.x]) {
-				//return CHInfo[x].first + CHInfo[x].second + CHChild[x] < CHInfo[other.x].first + CHInfo[other.x].second + CHChild[other.x];
-			//}
-			//else {
-				if (CHInfo[x].first + CHInfo[x].second != CHInfo[other.x].first + CHInfo[other.x].second)
-				{
-					return CHInfo[x].first + CHInfo[x].second < CHInfo[other.x].first + CHInfo[other.x].second;
-				}
-				else
-				{
-					if (CHInfo[x].first != CHInfo[other.x].first)
-					{
-						return CHInfo[x].first < CHInfo[other.x].first;
-					}
-					else
-					{
-						return x < other.x;
-					}
-				}
-			//}
+			//if ( CHInfo[x].second !=  CHInfo[other.x].second)
+				//return CHInfo[x].second < CHInfo[other.x].second;
+			if (CHInfo[x].first + CHInfo[x].second != CHInfo[other.x].first + CHInfo[other.x].second)
+				return CHInfo[x].first + CHInfo[x].second < CHInfo[other.x].first + CHInfo[other.x].second;
+			if (CHInfo[x].first != CHInfo[other.x].first)
+				return CHInfo[x].first < CHInfo[other.x].first;
+			return x < other.x;
 		}
 
 		HostRank(int x) : x(x) {
@@ -310,6 +297,11 @@ namespace Graph_D_H
 		std::string partitionID = "";
 		int mainTreeHeight = 17;
 
+		//input info
+		int contractDevice = -1;
+		int parallelFine = -1;
+		int constructDevice = -1;
+
 		//adjList and  NE(longitude and latitude)
 		thrust::host_vector<thrust::host_vector<pairs> > adjList = {};
 		thrust::host_vector<myPair<double> > NE_P = {};//first : N ; second :E ; nodeID : ID;
@@ -325,7 +317,6 @@ namespace Graph_D_H
 		//order and partition
 		//Partition Rank Tree
 		int PartitionMethod = 1;
-		int usingGPUConstruct = 1;
 		thrust::host_vector<TDrank> nonAdjcentNode = {};// ID = nonAdjcentNode[rank].second, from rank to ID
 		thrust::host_vector<myPair<int>> NANHash = {}; //first : nonAdjcentNode index; second maxSize; nodeID : nonadjcent Size
 		thrust::host_vector<int> father = {};
@@ -385,6 +376,7 @@ namespace Graph_D_H
 		thrust::host_vector<int> TreeBFS_ID = {};
 		thrust::host_vector<int> TreeBFS_adj = {};
 		thrust::host_vector<int> TreeBFS_pos = {};
+		thrust::host_vector<int> TreeBFS_changeTime = {};
 
 		thrust::host_vector<int64_t> RMQHash = {};
 		//thrust::host_vector<int> RMQ_Height = {};
@@ -401,6 +393,7 @@ namespace Graph_D_H
 		thrust::device_vector<int> TreeBFS_ID_D = {};
 		thrust::device_vector<int> TreeBFS_adj_D = {};
 		thrust::device_vector<int> TreeBFS_pos_D = {};
+		thrust::device_vector<int> TreeBFS_changeTime_D = {};
 
 		thrust::device_vector<int64_t> RMQHash_D;
 		//thrust::device_vector<int> RMQ_Height_D;
@@ -417,13 +410,16 @@ namespace Graph_D_H
 		void beforeH2H_noHub();
 		void inConstructH2H_noHub();
 		void inConstructH2H_noHub_multiThread();
-		void inConstructH2H_noHub_D();
+		void inConstructH2H_noHub_multiThread_2();
+		void inConstructH2H_noHub_D();//GPU + BFS
+		void inConstructH2H_noHub_D_2(); //GPU + TD
 		void mallocH2HLabel_noHub();
 		void makeH2HLabel_noHub_serial();
 		void makeH2HLabel_noHub_multiThred();
-		void makeH2HLabel_noHub_noComm();
+		void makeH2HLabel_noHub_multiThred_2();
+		void makeH2HLabel_noHub_noComm();  //GPU + BFS
 		void makeH2HLabel_noHub_noComm_2();
-		void makeH2HLabel_noHub_noComm_3();
+		void makeH2HLabel_noHub_noComm_3();//GPU + TD
 		void translateH2H_noHub();
 		void translateH2HBack_noHub();
 		void displayH2H_noHub();
@@ -444,8 +440,9 @@ namespace Graph_D_H
 
 
 		//construct data and time info
+		long long int size1 = 0;
+		int parallelFine_Construct = -1;
 		int ConstructMethod = 1;
-		int ContractM = 1;
 		int changeHeight = 0;
 		long long int partitionTime = 0;
 		long long int makePartitionRankTreeTime = 0;
@@ -500,7 +497,7 @@ namespace Graph_D_H
 		int tempnonAdjcentNodeIndex = INT_MAX;
 
 		//query
-		int queryMaxSize = 1500000;
+		int queryMaxSize = 1000000;
 		thrust::host_vector<int> x = {};
 		thrust::host_vector<int> y = { };
 		thrust::host_vector<int> result = {};
