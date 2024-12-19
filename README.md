@@ -106,21 +106,20 @@ If answered query, query time will be recorded at './QueryResult/graphName/'.
 
 ## Difference between L3-Label and L4-Label
 
-We did not comment out the L4 code.
 
 If readers need to run L3 label, please comment out L4 code in next functions:
 
 Kernel_functions.cu: 
 
-(line 738-) makeH2HLabel_noCommunication_D_noHub_3();
+ makeH2HLabel_noCommunication_D_noHub_3();
 
-(line 830-) makeH2HLabel_noCommunication_D_noHub();
+ makeH2HLabel_noCommunication_D_noHub();
                      
 H2HConstruction.cu: 
 
-(line 723-) makeH2HLabel_noHub_serial();
+ makeH2HLabel_noHub_serial();
 
-(line 791-) makeH2HLabel_noHub_multiThred();
+ makeH2HLabel_noHub_multiThred();
 
 The query functions for answering L3 and L4 are defined in
 ```
